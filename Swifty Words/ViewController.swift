@@ -163,7 +163,15 @@ class ViewController: UIViewController {
 
 //  function when a letter button is tapped
     @objc func letterTapped(_ sender: UIButton) {
+//      all our buttons have title but if there were a button without the title program would exit
+        guard let buttonTitle = sender.titleLabel?.text else { return }
         
+//      adding button string to current answer text field
+        currentAnswer.text = currentAnswer.text?.appending(buttonTitle)
+//      all buttons that user has tapped
+        activatedButtons.append(sender)
+//      using isHidden such that it can't be tapped again
+        sender.isHidden = true
     }
     
 //  function when a submit button is tapped
@@ -173,7 +181,16 @@ class ViewController: UIViewController {
     
 //  function when clear button is tapped
     @objc func clearTapped(_ sender: UIButton) {
+//      clearing the text field
+        currentAnswer.text = ""
         
+//      unhiding all buttons such that they can be tapped
+        for button in activatedButtons {
+            button.isHidden = false
+        }
+        
+//      removing all buttons from the array
+        activatedButtons.removeAll()
     }
     
     func loadLevel() {
