@@ -176,7 +176,44 @@ class ViewController: UIViewController {
     
 //  function when a submit button is tapped
     @objc func submitTapped() {
+//      storing our text field input in answer Text variable
+        guard let answerText = currentAnswer.text else { return }
+    
+//      finding answer text using index
+        if let solutionPosition = solutions.firstIndex(of: answerText) {
+//          removing all activated buttons if answer is found
+            activatedButtons.removeAll()
+//          splitting the answers
+            var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
+            
+//          checking which answer the input was equal to and then setting the answer in the answers label section where the format is "6 letters"
+            splitAnswers?[solutionPosition] = answerText
+            answersLabel.text = splitAnswers?.joined(separator: "\n")
+            
+//          clearing out search field
+            currentAnswer.text = ""
+//          adding one to score
+            score += 1
+            
+//          if this condition is true it means that all answers were obtained and it'll load new file to get new questions
+            if score % 7 == 0 {
+                let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
+                present(ac, animated: true)
+            }
+        }
+    }
+    
+    func levelUp(action: UIAlertAction) {
+        level += 1
         
+        solutions.removeAll(keepingCapacity: true)
+        
+        loadLevel()
+        
+        for button in letterButtons {
+            button.isHidden = false
+        }
     }
     
 //  function when clear button is tapped
