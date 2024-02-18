@@ -19,7 +19,16 @@ class ViewController: UIViewController {
     var solutions = [String]()
     
 //  to keep up with score and level
-    var score = 0
+    var score = 0 {
+//      if anytime the score is changed it is updated
+        didSet {
+            scoreLabel.text = "Score: \(score)"
+        }
+    }
+    
+//  to keep track of questions answered for levelling up
+    var actualQuestionsAnswered = 0
+    
 //  one because file name starts with level1
     var level = 1
     
@@ -86,7 +95,8 @@ class ViewController: UIViewController {
         buttonsView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(buttonsView)
         
-        
+//      adding border for letter buttons
+        buttonsView.layer.borderWidth = 1
         
 //      setting constraints
         NSLayoutConstraint.activate([
@@ -120,6 +130,7 @@ class ViewController: UIViewController {
             clear.heightAnchor.constraint(equalToConstant: 44),
             
 //          adding letter button constraints
+
             buttonsView.widthAnchor.constraint(equalToConstant: 750),
             buttonsView.heightAnchor.constraint(equalToConstant: 320),
             buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -195,15 +206,30 @@ class ViewController: UIViewController {
 //          adding one to score
             score += 1
             
+//          this variable is to keep track or questions answered
+            actualQuestionsAnswered += 1
+            
 //          if this condition is true it means that all answers were obtained and it'll load new file to get new questions
-            if score % 7 == 0 {
+            if actualQuestionsAnswered % 7 == 0 {
                 let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
                 ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
                 present(ac, animated: true)
             }
+        } else {
+//          deducting score
+            score -= 1
+//          if the guess is wrong it returns an alert controller and clears the text field
+            let ac = UIAlertController(title: nil, message: "Wrong guess!", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "try again!", style: .default) { _ in
+                let button = UIButton(type: .system)
+                self.clearTapped(button)
+            })
+            present(ac, animated: true)
+            
         }
     }
     
+//  levelling up function
     func levelUp(action: UIAlertAction) {
         level += 1
         
